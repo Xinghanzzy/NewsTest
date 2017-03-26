@@ -1,0 +1,408 @@
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ cd .ssh
+bash: cd: .ssh: No such file or directory
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ ssh-keygen -t rsa -C "hldnpqzzy@sina.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/Lenovo/.ssh/id_rsa):
+Created directory '/c/Users/Lenovo/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/Lenovo/.ssh/id_rsa.
+Your public key has been saved in /c/Users/Lenovo/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:fqm+fAqJ+nqqek4MZO46Jt0D4n80mwhY1EDF3yUX7kI hldnpqzzy@sina.com
+The key's randomart image is:
++---[RSA 2048]----+
+| .o=.     ..     |
+|  . o   ..o      |
+| +   . .E+.      |
+|+ .   ....       |
+|oo      S .      |
+|++.  + o . .     |
+|.++o+ * . o      |
+|++oo++ o o.      |
+|B=**o. .*+       |
++----[SHA256]-----+
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ G:
+bash: G:: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ cd g:/GitTest
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest
+$ git init
+Initialized empty Git repository in G:/GitTest/.git/
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git remote add origin https://github.com/Xinghanzzy/NewsTest.git
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git state\
+>
+git: 'state' is not a git command. See 'git --help'.
+
+Did you mean this?
+        stage
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git state
+git: 'state' is not a git command. See 'git --help'.
+
+Did you mean this?
+        stage
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ gst
+bash: gst: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git--help
+bash: git--help: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git --help
+usage: git [--version] [--help] [-C <path>] [-c name=value]
+           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+           [-p | --paginate | --no-pager] [--no-replace-objects] [--bare]
+           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+           <command> [<args>]
+
+These are common Git commands used in various situations:
+
+start a working area (see also: git help tutorial)
+   clone      Clone a repository into a new directory
+   init       Create an empty Git repository or reinitialize an existing one
+
+work on the current change (see also: git help everyday)
+   add        Add file contents to the index
+   mv         Move or rename a file, a directory, or a symlink
+   reset      Reset current HEAD to the specified state
+   rm         Remove files from the working tree and from the index
+
+examine the history and state (see also: git help revisions)
+   bisect     Use binary search to find the commit that introduced a bug
+   grep       Print lines matching a pattern
+   log        Show commit logs
+   show       Show various types of objects
+   status     Show the working tree status
+
+grow, mark and tweak your common history
+   branch     List, create, or delete branches
+   checkout   Switch branches or restore working tree files
+   commit     Record changes to the repository
+   diff       Show changes between commits, commit and working tree, etc
+   merge      Join two or more development histories together
+   rebase     Reapply commits on top of another base tip
+   tag        Create, list, delete or verify a tag object signed with GPG
+
+collaborate (see also: git help workflows)
+   fetch      Download objects and refs from another repository
+   pull       Fetch from and integrate with another repository or a local branch
+   push       Update remote refs along with associated objects
+
+'git help -a' and 'git help -g' list available subcommands and some
+concept guides. See 'git help <command>' or 'git help <concept>'
+to read about a specific subcommand or concept.
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        BBC_News.py
+        BBC_ReadNews.py
+        CNN_News.py
+        CNN_ReadNews.py
+        News.py
+        test.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git add --all
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git commit -m "hhh"
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <(NULL)>) not allowed
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.email "you@example.com"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.email "hldnpqzzy@sina.com"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.name "Xinghanzzy"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git commit -m "hhh"
+[master (root-commit) c98954b] hhh
+ 6 files changed, 893 insertions(+)
+ create mode 100644 BBC_News.py
+ create mode 100644 BBC_ReadNews.py
+ create mode 100644 CNN_News.py
+ create mode 100644 CNN_ReadNews.py
+ create mode 100644 News.py
+ create mode 100644 test.py
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push origin master
+Counting objects: 8, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (8/8), 6.95 KiB | 0 bytes/s, done.
+Total 8 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), done.
+To https://github.com/Xinghanzzy/NewsTest.git
+ * [new branch]      master -> master
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$
+**************************************************************************
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ cd .ssh
+bash: cd: .ssh: No such file or directory
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ ssh-keygen -t rsa -C "hldnpqzzy@sina.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/Lenovo/.ssh/id_rsa):
+Created directory '/c/Users/Lenovo/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/Lenovo/.ssh/id_rsa.
+Your public key has been saved in /c/Users/Lenovo/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:fqm+fAqJ+nqqek4MZO46Jt0D4n80mwhY1EDF3yUX7kI hldnpqzzy@sina.com
+The key's randomart image is:
++---[RSA 2048]----+
+| .o=.     ..     |
+|  . o   ..o      |
+| +   . .E+.      |
+|+ .   ....       |
+|oo      S .      |
+|++.  + o . .     |
+|.++o+ * . o      |
+|++oo++ o o.      |
+|B=**o. .*+       |
++----[SHA256]-----+
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ G:
+bash: G:: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 ~
+$ cd g:/GitTest
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest
+$ git init
+Initialized empty Git repository in G:/GitTest/.git/
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git remote add origin https://github.com/Xinghanzzy/NewsTest.git
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git state\
+>
+git: 'state' is not a git command. See 'git --help'.
+
+Did you mean this?
+        stage
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git state
+git: 'state' is not a git command. See 'git --help'.
+
+Did you mean this?
+        stage
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ gst
+bash: gst: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git--help
+bash: git--help: command not found
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git --help
+usage: git [--version] [--help] [-C <path>] [-c name=value]
+           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+           [-p | --paginate | --no-pager] [--no-replace-objects] [--bare]
+           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+           <command> [<args>]
+
+These are common Git commands used in various situations:
+
+start a working area (see also: git help tutorial)
+   clone      Clone a repository into a new directory
+   init       Create an empty Git repository or reinitialize an existing one
+
+work on the current change (see also: git help everyday)
+   add        Add file contents to the index
+   mv         Move or rename a file, a directory, or a symlink
+   reset      Reset current HEAD to the specified state
+   rm         Remove files from the working tree and from the index
+
+examine the history and state (see also: git help revisions)
+   bisect     Use binary search to find the commit that introduced a bug
+   grep       Print lines matching a pattern
+   log        Show commit logs
+   show       Show various types of objects
+   status     Show the working tree status
+
+grow, mark and tweak your common history
+   branch     List, create, or delete branches
+   checkout   Switch branches or restore working tree files
+   commit     Record changes to the repository
+   diff       Show changes between commits, commit and working tree, etc
+   merge      Join two or more development histories together
+   rebase     Reapply commits on top of another base tip
+   tag        Create, list, delete or verify a tag object signed with GPG
+
+collaborate (see also: git help workflows)
+   fetch      Download objects and refs from another repository
+   pull       Fetch from and integrate with another repository or a local branch
+   push       Update remote refs along with associated objects
+
+'git help -a' and 'git help -g' list available subcommands and some
+concept guides. See 'git help <command>' or 'git help <concept>'
+to read about a specific subcommand or concept.
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        BBC_News.py
+        BBC_ReadNews.py
+        CNN_News.py
+        CNN_ReadNews.py
+        News.py
+        test.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git add --all
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git commit -m "hhh"
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <(NULL)>) not allowed
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.email "you@example.com"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.email "hldnpqzzy@sina.com"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git config --global user.name "Xinghanzzy"
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git commit -m "hhh"
+[master (root-commit) c98954b] hhh
+ 6 files changed, 893 insertions(+)
+ create mode 100644 BBC_News.py
+ create mode 100644 BBC_ReadNews.py
+ create mode 100644 CNN_News.py
+ create mode 100644 CNN_ReadNews.py
+ create mode 100644 News.py
+ create mode 100644 test.py
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push origin master
+Counting objects: 8, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (8/8), 6.95 KiB | 0 bytes/s, done.
+Total 8 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), done.
+To https://github.com/Xinghanzzy/NewsTest.git
+ * [new branch]      master -> master
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git branch testbranch1
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git branch --all
+* master
+  testbranch1
+  remotes/origin/master
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push test.py
+test.py
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push testbranch1
+fatal: 'testbranch1' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git add --all
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push testbranch1
+fatal: 'testbranch1' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git push origin testbranch1
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/Xinghanzzy/NewsTest.git
+ * [new branch]      testbranch1 -> testbranch1
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git branch --all
+* master
+  testbranch1
+  remotes/origin/master
+  remotes/origin/testbranch1
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (master)
+$ git checkout testbranch1
+Switched to branch 'testbranch1'
+
+Lenovo@DESKTOP-Dante MINGW64 /g/GitTest (testbranch1)
+$
