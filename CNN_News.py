@@ -1,27 +1,37 @@
-# -*- coding: UTF-8 -*- ¡£
+# -*- coding: UTF-8 -*-
+#ä½¿ç”¨ str ç±»çš„.replaceå‡½æ•°æ›¿æ¢ â€˜ -> " æ¯”æ­£åˆ™å¥½ç”¨ä¸€äº›
 import urllib
 import urllib2
 import re
 import time
 import os
+import MySQLdb
+
+conn = MySQLdb.connect(
+        host = '127.0.0.1',
+        port = 3309,            #Dante 3306  Lab 3309
+        user = 'root',
+        passwd = '123456',
+        db = 'news',
+        )
+cur = conn.cursor()
 
 
-
-#´¦ÀíÒ³Ãæ±êÇ©Àà
+#å¤„ç†é¡µé¢æ ‡ç­¾ç±»
 class Tool:
-    #È¥³ıheadline
+    #å»é™¤headline
     replaceHeadline = re.compile('","headline":"')  
     #thumbnail 1
     removeThumbnail_1 = re.compile('"thumbnail":"')  
     #thumbnail 2
     removeThumbnail_2 = re.compile('","thumbnail"":"')  
-	#½«Ë«ÒıºÅÌŞ³ı
+	#å°†åŒå¼•å·å‰”é™¤
     removeQuoMark = re.compile('"')
-    #½«ºÚÌåÌŞ³ı 1
+    #å°†é»‘ä½“å‰”é™¤ 1
     removeStrong_1 = re.compile('\\u003cstrong>')
-    #½«ºÚÌåÌŞ³ı 2
+    #å°†é»‘ä½“å‰”é™¤ 2
     removeStrong_2 = re.compile('\\u003c/strong>')
-    #½«Ğ±¸ÜÌŞ³ı ??
+    #å°†æ–œæ å‰”é™¤ ??
     #removeXie = re.compile('\\\\')
     
     
@@ -37,17 +47,17 @@ class Tool:
         x = re.sub(self.removeStrong_2,"",x)
         x = re.sub(self.removeQuoMark,"",x)
         x = re.sub(r'\\',"",x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
 
     def replacePic(self,x):
         x = re.sub(self.removeWidth,"800",x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
         
     def replaceTime(self , x):
         x = re.match(self.replacetime, x)
-        print x.group()
+        #print x.group()
         a = re.sub(self.replacetime2,"-",str(x.group()))
         b = a.strip()
         return b[1:]
@@ -56,7 +66,7 @@ class CNN:
     def __init__(self, baseUrl):
         self.baseURL = baseUrl
         self.tool = Tool()
-		#È«¾Öfile±äÁ¿£¬ÎÄ¼şĞ´Èë²Ù×÷¶ÔÏó
+		#å…¨å±€fileå˜é‡ï¼Œæ–‡ä»¶å†™å…¥æ“ä½œå¯¹è±¡
         self.file = None
         self.time = time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time()))
 
@@ -68,7 +78,7 @@ class CNN:
             return response.read().decode('utf-8')
         except urllib2.URLError, e:
             if hasattr(e, "reason"):
-                print "Á¬½ÓCNN,´íÎóÔ­Òò", e.reason # u''»á±¨´í why
+                print "è¿æ¥CNN,é”™è¯¯åŸå› ", e.reason # u''ä¼šæŠ¥é”™ why
                 return None
 
 
@@ -76,15 +86,16 @@ class CNN:
         page = self.getPage(1)
         pattern = re.compile('"uri":"(.*?)","thumbnail"', re.S)
         result = re.findall(pattern, page)
+        print result
         contents = []
-        count = 1 #ĞÂÎÅÉÙÓÚ20¸ö
+        count = 1 #æ–°é—»å°‘äº20ä¸ª
         for item in result:
             if count > 19 :
                 break
-            print   "The News url is :  " + self.tool.replace(item)
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+            #print   "The News url is :  " + self.tool.replace(item)
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = str(count) + "\n" + self.tool.replace(item) + "\n" + self.tool.replaceTime(self.tool.replace(item)) + "\n" + "\n"
-            print str(content)
+            #print str(content)
             if len(content) < 10 :
                 continue            
             contents.append(content.encode('utf-8'))
@@ -93,7 +104,7 @@ class CNN:
 			
 			
     def getPicture(self):
-        #´ÓurlÀïÃæÑ°ÕÒĞÂÎÅËõÂÔÍ¼
+        #ä»urlé‡Œé¢å¯»æ‰¾æ–°é—»ç¼©ç•¥å›¾
         page = self.getPage(1)
         pattern = re.compile('"thumbnail":"(.*?)"', re.S)
         result = re.findall(pattern, page)
@@ -102,15 +113,14 @@ class CNN:
         for item in result:
             if count > 19 :
                 break
-            print   "The Picture url is :  " + self.tool.replace(item)
-			#½«Í¼Æ¬½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û 
+            #print   "The Picture url is :  " + self.tool.replace(item)
+			#å°†å›¾ç‰‡è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦ 
             content = "\n" + self.tool.replace(item) + "\n"
             if len(content) < 10 :
                 continue
             contents.append(content.encode('utf-8'))
             count += 1
-        return contents	
-        return "0.0"
+        return contents
         
         
     def saveImg(self,contents,fileName):
@@ -125,31 +135,45 @@ class CNN:
         
 		
     def writeData(self,contents):
-        #ÏòÎÄ¼şĞ´ÈëÃ¿Ò»Â¥µÄĞÅÏ¢
+        #å‘æ–‡ä»¶å†™å…¥æ¯ä¸€æ¥¼çš„ä¿¡æ¯
         for item in contents:
             self.file.write(item)
-	
+
+    def saveAllToDb(self, contentsfile, contentsimg):
+        for (contentfile, contentimg) in zip(contentsfile, contentsimg):
+            dbTemp = str(contentfile).split('\n', 5)
+            ISOTIMEFORMAT = '%Y-%m-%d %X'
+            cur.execute(
+                "insert ignore into news(news_ID,news_URL,news_Title,news_Data,news_From,news_MiniImg,news_Top_n,news_InTime) values('%d','%s','%s','%s','%s','%s','%s','%s') "
+                % (0, str(dbTemp[1]), str(dbTemp[2].replace('\'','"')), str(dbTemp[3]), "CNN", str(contentimg).split('\n')[1],
+                str(dbTemp[0]), time.strftime(ISOTIMEFORMAT, time.localtime())))
+            conn.commit()
+
     def start(self):
         self.file = open("CNN News " + ".txt","w+")
         try:
             print "CNN News "
             contents = CNN.getPostData()
-            self.writeData(contents)
-            contents = CNN.getPicture()
-            mkpath = os.path.abspath('.') + "\\News\\CNN_Mini"
-            if os.path.isdir(mkpath):
-                pass
-            else:
-                os.mkdir(mkpath)
-            self.saveImg(contents ,  mkpath )
-        #³öÏÖĞ´ÈëÒì³£
+            #self.writeData(contents)
+            contentsPic = CNN.getPicture()
+            print "Next DB"
+            self.saveAllToDb(contents , contentsPic)
+            # mkpath = os.path.abspath('.') + "\\News\\CNN_Mini"
+            # if os.path.isdir(mkpath):
+            #     pass
+            # else:
+            #     os.mkdir(mkpath)
+            #self.saveImg(contentsPic ,  mkpath )
+        #å‡ºç°å†™å…¥å¼‚å¸¸
         except IOError,e:
-            print "Ğ´ÈëÒì³££¬Ô­Òò" + e.message
+            print "å†™å…¥å¼‚å¸¸ï¼ŒåŸå› " + e.message
         finally:
-            print "Ğ´ÈëÈÎÎñÍê³É"
+            print "å†™å…¥ä»»åŠ¡å®Œæˆ"
             self.file.close()
 
 
 baseURL = 'http://edition.cnn.com/'
 CNN = CNN(baseURL)
 CNN.start()
+cur.close()
+conn.close()

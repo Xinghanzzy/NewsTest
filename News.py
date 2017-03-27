@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*- ¡£
+# -*- coding: UTF-8 -*- ã€‚
 import urllib
 import urllib2
 import re

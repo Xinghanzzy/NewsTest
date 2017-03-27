@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*- 
-#BBC ÈÈµãĞÂÎÅ»ñÈ¡
-#±£´æÈçÊı¾İ¿â
-#È¡ÏûËõÂÔÍ¼±£´æ
+#BBC çƒ­ç‚¹æ–°é—»è·å–
+#ä¿å­˜å¦‚æ•°æ®åº“
+#å–æ¶ˆç¼©ç•¥å›¾ä¿å­˜
+#datetime æ ‡ç­¾å¯ä»¥ç›´æ¥æå–åˆ°æ—¶é—´
+#Video æ ‡ç­¾ å¤„ç†è§†é¢‘ç±»
 import urllib
 import urllib2
 import re
@@ -11,7 +13,7 @@ import MySQLdb
 
 conn = MySQLdb.connect(
         host = '127.0.0.1',
-        port = 3306,
+        port = 3309,            #Dante 3306  Lab 3309
         user = 'root',
         passwd = '123456',
         db = 'news',
@@ -19,35 +21,35 @@ conn = MySQLdb.connect(
 cur = conn.cursor()
 
 
-#´¦ÀíÒ³Ãæ±êÇ©Àà
+#å¤„ç†é¡µé¢æ ‡ç­¾ç±»
 class Tool:
-    #È¥³ıµÚÒ»¸öÊ±¼ä
+    #å»é™¤ç¬¬ä¸€ä¸ªæ—¶é—´
     removeTime = re.compile('<span aria-hidden="true" class="qa-status-date-output">(.*?)</span>')
     #
     replaceURL = re.compile('href="(.*?)">')
-    #È¥³ıimg±êÇ©,7Î»³¤¿Õ¸ñ
+    #å»é™¤imgæ ‡ç­¾,7ä½é•¿ç©ºæ ¼
     removeImg = re.compile('<img.*?>| {7}|')
-    #É¾³ı³¬Á´½Ó±êÇ©
+    #åˆ é™¤è¶…é“¾æ¥æ ‡ç­¾
     removeAddr = re.compile('<a.*?>|</a>')
-    #°Ñ»»ĞĞµÄ±êÇ©»»Îª\n ÎŞÓÃ
+    #æŠŠæ¢è¡Œçš„æ ‡ç­¾æ¢ä¸º\n æ— ç”¨
     replaceLine = re.compile('<tr>|<div>|</div>|</p>')
-    #½«±í¸ñÖÆ±í<td>Ìæ»»Îª\t
+    #å°†è¡¨æ ¼åˆ¶è¡¨<td>æ›¿æ¢ä¸º\t
     replaceTD= re.compile('<td>')
-    #°Ñ¶ÎÂä¿ªÍ·»»Îª\n¼Ó¿ÕÁ½¸ñ
+    #æŠŠæ®µè½å¼€å¤´æ¢ä¸º\nåŠ ç©ºä¸¤æ ¼
     replacePara = re.compile('<p .*?>')
-    #½«»»ĞĞ·û»òË«»»ĞĞ·ûÌæ»»Îª\n
+    #å°†æ¢è¡Œç¬¦æˆ–åŒæ¢è¡Œç¬¦æ›¿æ¢ä¸º\n
     replaceBR = re.compile('<br><br>|<br>')
-	#½«urlºóÃæµÄ×¸ÓàÈ¥µô
+	#å°†urlåé¢çš„èµ˜ä½™å»æ‰
     removeElse = re.compile('">')
-	#½«ÆäÓà±êÇ©ÌŞ³ı
+	#å°†å…¶ä½™æ ‡ç­¾å‰”é™¤
     removeExtraTag = re.compile('<.*?>')
-	#½«VideoÌŞ³ı
+	#å°†Videoå‰”é™¤
     removeVideo = re.compile('Video')
-	#½«&#x27;×°»»Îª'
+	#å°†&#x27;è£…æ¢ä¸º'
     replaceFen = re.compile('&#x27;')
-	#ÌŞ³ıwidth±êÇ©
+	#å‰”é™¤widthæ ‡ç­¾
     removeWidth = re.compile('{width}')
-    #ÌŞ³ıºóÃæ×¸Óà
+    #å‰”é™¤åé¢èµ˜ä½™
     removeSrcL = re.compile('.jpg"([\s\S]*)')
     
     def replace(self,x):
@@ -63,12 +65,12 @@ class Tool:
         x = re.sub(self.removeExtraTag,"",x)
         x = re.sub(self.removeElse,"\n",x)
         x = re.sub(self.replaceFen,'\"',x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
 
     def replacePic(self,x):
         x = re.sub(self.removeWidth,"320",x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
 
 class BBC:
@@ -76,7 +78,7 @@ class BBC:
         print "__init__"
         self.baseURL = baseUrl
         self.tool = Tool()
-		#È«¾Öfile±äÁ¿£¬ÎÄ¼şĞ´Èë²Ù×÷¶ÔÏó
+        #å…¨å±€fileå˜é‡ï¼Œæ–‡ä»¶å†™å…¥æ“ä½œå¯¹è±¡
         self.file = None
         self.time = time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time()))
 
@@ -91,7 +93,7 @@ class BBC:
         except urllib2.URLError, e:
             print "error"
             if hasattr(e, "reason"):
-                print "Á¬½ÓBBC,´íÎóÔ­Òò", e.reason # u''»á±¨´í why
+                print "è¿æ¥BBC,é”™è¯¯åŸå› ", e.reason # u''ä¼šæŠ¥é”™ why
                 return None
 
 
@@ -104,7 +106,7 @@ class BBC:
         count = 1
         for item in result:
             #print   "The News url is :  " + self.tool.replace(item)
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = str(count) + "\n" + self.tool.replace(item)+"\n"+"\n"               
             count = count + 1                  
             contents.append(content.encode('utf-8'))
@@ -112,21 +114,20 @@ class BBC:
 			
 			
     def getPicture(self):
-        #´ÓurlÀïÃæÑ°ÕÒĞÂÎÅËõÂÔÍ¼
+        #ä»urlé‡Œé¢å¯»æ‰¾æ–°é—»ç¼©ç•¥å›¾
         page = self.getPage(1)
         pattern = re.compile('data-src="(.*?)" data-widths=', re.S)
         result = re.findall(pattern, page)
         contents = []
         for item in result:
             #print   "The Picture url is :  " + self.tool.replacePic(item)
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = "\n" + self.tool.replacePic(item) + "\n"
             contents.append(content.encode('utf-8'))
-        return contents	
-        return "0.0"
+        return contents
  		
     def saveDataToFile(self,contents):
-        #ÏòÎÄ¼şĞ´ÈëÃ¿Ò»Â¥µÄĞÅÏ¢
+        #å‘æ–‡ä»¶å†™å…¥æ¯ä¸€æ¥¼çš„ä¿¡æ¯
         for item in contents:
             self.file.write(item)       
         
@@ -148,7 +149,6 @@ class BBC:
             conn.commit()
 	
     def start(self):
-        self.file = open("BBC News " + ".txt","w+")
         try:
             print "BBC News "
             contents = BBC.getPostData()
@@ -156,26 +156,23 @@ class BBC:
             #self.saveDataToFile(contents)
             contentsPic = BBC.getPicture()
 
-            #¿ÕÕıÎÄ´íÎó´¦Àí
+            #ç©ºæ­£æ–‡é”™è¯¯å¤„ç†
             if contents == [] :
                 contents = ['URL is None']
-            if contentPic == [] :
-                contentPic = ['Pic is None']
+            if contentsPic == [] :
+                contentsPic = ['Pic is None']
 
             self.saveAllToDb(contents,contentsPic)
             mkpath = os.path.abspath('.') + "\\News\\BBC_Mini"
-            #ÎŞÎÄ¼ş¼ĞÔò´´½¨
+            #æ— æ–‡ä»¶å¤¹åˆ™åˆ›å»º
             if os.path.isdir(mkpath):
                 pass
             else:
                 os.mkdir(mkpath)
             #self.saveImg(contentsPic ,  mkpath )
-        #³öÏÖĞ´ÈëÒì³£
+        #å‡ºç°å†™å…¥å¼‚å¸¸
         except IOError,e:
-            print "Ğ´ÈëÒì³££¬Ô­Òò" + e.message
-        finally:
-            print "Ğ´ÈëÈÎÎñÍê³É"
-            self.file.close()
+            print "å†™å…¥å¼‚å¸¸ï¼ŒåŸå› " + e.message
 
 start = time.clock()
 baseURL = 'http://www.bbc.com/news'

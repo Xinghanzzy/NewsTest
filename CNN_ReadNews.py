@@ -1,46 +1,56 @@
-# -*- coding: UTF-8 -*- ¡£
+# -*- coding: UTF-8 -*- ã€‚
 import urllib
 import urllib2
 import re
 import time
 import os
+import sys
+import MySQLdb
+
+conn = MySQLdb.connect(
+        host = '127.0.0.1',
+        port = 3309,            #Dante 3306  Lab 3309
+        user = 'root',
+        passwd = '123456',
+        db = 'news',
+        )
+cur = conn.cursor()
 
 
-
-#´¦ÀíÒ³Ãæ±êÇ©Àà
+#å¤„ç†é¡µé¢æ ‡ç­¾ç±»
 class Tool:
 
-    #È¥³ıimg±êÇ©,7Î»³¤¿Õ¸ñ
+    #å»é™¤imgæ ‡ç­¾,7ä½é•¿ç©ºæ ¼
     removeImg = re.compile('<img.*?>| {7}|')
-    #É¾³ı³¬Á´½Ó±êÇ©
+    #åˆ é™¤è¶…é“¾æ¥æ ‡ç­¾
     removeAddr = re.compile('<a.*?>|</a>')
-    #°Ñ»»ĞĞµÄ±êÇ©»»Îª\n
+    #æŠŠæ¢è¡Œçš„æ ‡ç­¾æ¢ä¸º\n
     replaceLine = re.compile('<tr>|<div>|</div>|</p>')
-    #½«±í¸ñÖÆ±í<td>Ìæ»»Îª\t
+    #å°†è¡¨æ ¼åˆ¶è¡¨<td>æ›¿æ¢ä¸º\t
     replaceTD= re.compile('<td>')
-    #°Ñ¶ÎÂä¿ªÍ·»»Îª\n¼Ó¿ÕÁ½¸ñ
+    #æŠŠæ®µè½å¼€å¤´æ¢ä¸º\nåŠ ç©ºä¸¤æ ¼
     replacePara = re.compile('<p.*?>')
-    #°Ñhighlight¶ÎÂä¿ªÍ·
+    #æŠŠhighlightæ®µè½å¼€å¤´
     replacePara2 = re.compile('<li class="el__storyhighlights__item el__storyhighlights--normal">')   
-    #°Ñbody¶ÎÂä¿ªÍ·
+    #æŠŠbodyæ®µè½å¼€å¤´
     replacePara3 = re.compile('<div class="zn-body__paragraph">')  
-    #½«»»ĞĞ·û»òË«»»ĞĞ·ûÌæ»»Îª\n
+    #å°†æ¢è¡Œç¬¦æˆ–åŒæ¢è¡Œç¬¦æ›¿æ¢ä¸º\n
     replaceBR = re.compile('<br><br>|<br>')
     removeElse = re.compile('">')
-	#½«ÆäÓà±êÇ©ÌŞ³ı
+    #å°†å…¶ä½™æ ‡ç­¾å‰”é™¤
     removeExtraTag = re.compile('<.*?>')
-    #½«×¢ÊÍÌŞ³ı/\*.*?\*/
+    #å°†æ³¨é‡Šå‰”é™¤/\*.*?\*/
     removeComments = re.compile('/\*\*/([\s\S]*?)/\*\*/')
-	#½«¿ÕĞĞÌŞ³ı
+    #å°†ç©ºè¡Œå‰”é™¤
     removeBlockline = re.compile('\s\n\s?\n\s?\n')
-    #½«articleBodyÌŞ³ı
+    #å°†articleBodyå‰”é™¤
     removeArticleBody = re.compile('articleBody">')
     #{"
     removeElse = re.compile('{"(.*?)"}')
     #script
     removeScript = re.compile('<script(.*?)</script>')
     
-    #È¥³ıheadline
+    #å»é™¤headline
     replaceHeadline = re.compile('","headline":"')  
     #thumbnail 1
     removeThumbnail_1 = re.compile('"thumbnail":"')  
@@ -50,12 +60,12 @@ class Tool:
     removeMedium = re.compile('data-src-medium="')  
     #large 
     removeLarge = re.compile('" data-src-large="')  
-	#½«Ë«ÒıºÅÌŞ³ı
+    #å°†åŒå¼•å·å‰”é™¤
     removeQuoMark = re.compile('"')
     
-    #±êÌâ
+    #æ ‡é¢˜
     removeTitleElse = re.compile('[/|\:*?"<>|]')
-	
+
     
     def replace(self,x):
         x = re.sub(self.replaceHeadline,"  ||||  ",x)
@@ -65,7 +75,7 @@ class Tool:
         x = re.sub(self.removeMedium,"",x)
         x = re.sub(self.removeLarge,"",x)
         x = re.sub(self.removeQuoMark,"",x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
 
     def replaceBody(self,x):
@@ -87,7 +97,7 @@ class Tool:
         x = re.sub(self.removeBlockline,"",x)
         x = re.sub(self.removeArticleBody,"",x)
         
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
         
     def replaceTitle(self,x):
@@ -98,39 +108,40 @@ class CNN:
     def __init__(self, baseUrl):
         self.baseURL = baseUrl
         self.tool = Tool()
-		#È«¾Öfile±äÁ¿£¬ÎÄ¼şĞ´Èë²Ù×÷¶ÔÏó
+        #å…¨å±€fileå˜é‡ï¼Œæ–‡ä»¶å†™å…¥æ“ä½œå¯¹è±¡
         self.file = None
         self.newsURL = None
         self.time = time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time()))
 
-    def getPage(self, pageNum):
+    def getPage(self):
         try:
             url = self.baseURL + self.newsURL
             request = urllib2.Request(url)
             response = urllib2.urlopen(request)
+            print "response OK"
             return response.read().decode('utf-8')
         except urllib2.URLError, e:
             if hasattr(e, "reason"):
-                print "Á¬½ÓCNN,´íÎóÔ­Òò", e.reason # u''»á±¨´í why
+                print "è¿æ¥CNN,é”™è¯¯åŸå› ", e.reason # u''ä¼šæŠ¥é”™ why
                 return None
 
 
     def getNewsBody(self):
-        page = self.getPage(1)
-        #»ñÈ¡ĞÂÎÅÕıÎÄ 
+        page = self.getPage()
+        #è·å–æ–°é—»æ­£æ–‡ 
         pattern = re.compile('articleBody(.*?)<p class="zn-body__paragraph zn-body__footer">', re.S)
         result = re.findall(pattern, page)    
         contents5 = []        
         for item in result:            
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
-            content = "\n"+self.tool.replaceBody(item)+"\n"                 
+            #å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
+            content = self.tool.replaceBody(item)+"\n"
             contents5.append(content.encode('utf-8'))     
         return contents5
-			
-			
+
+
     def getPicture(self):
-        #´ÓurlÀïÃæÑ°ÕÒĞÂÎÅËõÂÔÍ¼
-        page = self.getPage(1)
+        #ä»urlé‡Œé¢å¯»æ‰¾æ–°é—»ç¼©ç•¥å›¾
+        page = self.getPage()
         pattern = re.compile('data-src-medium="(.*?)" data-src-large="', re.S)
         result = re.findall(pattern, page)
         contents = []
@@ -138,9 +149,9 @@ class CNN:
         for item in result:
             if count > 4 :
                 break
-            print   "The Picture url is :  " + self.tool.replace(item)
-			#½«Í¼Æ¬½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û 
-            content = "\n" + self.tool.replace(item) + "\n"
+            #print   "The Picture url is :  " + self.tool.replace(item)
+            #å°†å›¾ç‰‡è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
+            content = self.tool.replace(item)
             if len(content) < 10 :
                 continue
             contents.append(content.encode('utf-8'))
@@ -160,85 +171,43 @@ class CNN:
             num = num + 1
             f.write(data)
             f.close()
-        
-		
-    def writeData(self,contents):
-        #ÏòÎÄ¼şĞ´ÈëÃ¿Ò»Â¥µÄĞÅÏ¢
-        for item in contents:
-            self.file.write(item)
-            
-    def readData(self):
-        #¶ÁÈ¡bbsnewsÀïÃæµÄÄÚÈİ Çø·Ö³öÀ´url ±êÌâ ¸±±êÌâ
-        contents4 = []
-        try:
-            f = open('CNN News .txt', 'r')
-            for line in f.readlines():
-                if len(line) != 1:                     
-                    contents4.append(line)
-                    print "line : " + line
-            print "------------------------------\n"             
-            return contents4
-        except IOError,e:
-            print "Read CNN NEWS Òì³£" + e.message  
-        finally:
-            if f:
-                f.close()
-	
+
     def start(self):
         try:
             print "CNN ReadNews "
-            contents = CNN.readData()                
-            count = 1
-            for item in contents: 
-                #ID
-                print str(count) + "   " + item
-                if count % 4 == 1 :
-                    count = count + 1
-                    continue
+            count = cur.execute('select * from news where news_Text is  NULL and news_From="CNN"')
+            print  count
+            contents = cur.fetchmany(count)
+            #contents = CNN.readData()
+            for item in contents:
                 #URL
-                if count % 4 == 2 :
-                    #print "URL : " + item
-                    self.newsURL = item
-                    count = count + 1
-                    continue
-                #Title
-                if count % 4 == 3 :
-                    mkpath = os.path.abspath('.') + "\\News\\CNN\\" + self.tool.replaceTitle(item)
-                    print "dir : " + mkpath
-                    #Èç¹û¸ÃĞÂÎÅÒÑ¾­±£´æÔòÌø¹ı
-                    if os.path.isdir(mkpath):
-                        count = count + 1
-                        continue                        
-                    else:
-                        os.mkdir(mkpath) 
-                    #±£´æÕıÎÄ
-                    start = time.clock()
-                    contents2 = self.getNewsBody()
-                    self.file = open( mkpath + "\\body"+ ".txt","w+" )
-                    self.writeData(contents2)                    
-                    self.file.close()
-                    end = time.clock()
-                    print('getNewsBody Running time: %s Seconds'%(end-start))
-                    
-                    #±£´æÍ¼Æ¬
-                    start = time.clock()
-                    contents3 = self.getPicture()                    
-                    self.saveImg(contents3,mkpath) 
-                    end = time.clock()
-                    print('saveImg Running time: %s Seconds'%(end-start))
-                    
-                    count = count + 1
-                    continue                    
-                if count % 4 == 0 :
-                    count = count + 1
-                    continue
-            
-            
-        #³öÏÖĞ´ÈëÒì³£
+                self.newsURL = item[1]
+                start = time.clock()
+                contentsText = self.getNewsBody()
+                if contentsText == [] :
+                    contentsText = ['articleBody is None']
+                end = time.clock()
+                print('getNewsBody Running time: %s Seconds'%(end-start))
+                #ä¿å­˜å›¾ç‰‡
+                start = time.clock()
+                contentsPic = self.getPicture()
+                # ç©ºæ­£æ–‡é”™è¯¯å¤„ç†
+
+                if contentsPic == []:
+                    contentsPic = ['Picture is None']
+                pic = ""
+                for itemPic in contentsPic:
+                    pic = pic + str(itemPic) + " "
+                end = time.clock()
+                print('saveImg Running time: %s Seconds'%(end-start))
+                cur.execute("update news set news_Text=%s,news_Img=%s where news_URL = %s ;",
+                        (contentsText[0], str(pic), self.newsURL))
+                conn.commit()
+        #å‡ºç°å†™å…¥å¼‚å¸¸
         except IOError,e:
-            print "Ğ´ÈëÒì³££¬Ô­Òò" + e.message
+            print "å†™å…¥å¼‚å¸¸ï¼ŒåŸå› " + e.message
         finally:
-            print "Ğ´ÈëÈÎÎñÍê³É"
+            print "Save in DB is finish"
             
 
 a = time.clock()

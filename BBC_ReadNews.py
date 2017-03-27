@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*- ¡£
+# -*- coding: UTF-8 -*- ã€‚
 import urllib
 import urllib2
 import re
@@ -9,50 +9,48 @@ import MySQLdb
 
 conn = MySQLdb.connect(
         host = '127.0.0.1',
-        port = 3306,
+        port=3309,  # Dante 3306  Lab 3309
         user = 'root',
         passwd = '123456',
         db = 'news',
         )
 cur = conn.cursor()
 
-#´¦ÀíÒ³Ãæ±êÇ©Àà
+#å¤„ç†é¡µé¢æ ‡ç­¾ç±»
 class Tool:
-    #È¥³ıimg±êÇ©,7Î»³¤¿Õ¸ñ
+    #å»é™¤imgæ ‡ç­¾,7ä½é•¿ç©ºæ ¼
     removeImg = re.compile('<img.*?>| {7}|')
-    #È¥³ıimg±êÇ©2
+    #å»é™¤imgæ ‡ç­¾2
     removeImg2 = re.compile('<figcaption([\s\S]*?)</figcaption>')
-    #È¥µôÍ¼Æ¬À´Ô´
+    #å»æ‰å›¾ç‰‡æ¥æº
     removeFrom = re.compile('<span class="story-image-copyright">(.*?)</span>')
-    #É¾³ı³¬Á´½Ó±êÇ©
+    #åˆ é™¤è¶…é“¾æ¥æ ‡ç­¾
     removeAddr = re.compile('<a.*?>|</a>')    
-    #½«±í¸ñÖÆ±í<td>Ìæ»»Îª\t
+    #å°†è¡¨æ ¼åˆ¶è¡¨<td>æ›¿æ¢ä¸º\t
     replaceTD= re.compile('<td>')
-    #°Ñ¶ÎÂä¿ªÍ·»»Îª\n¼Ó¿ÕÁ½¸ñ
+    #æŠŠæ®µè½å¼€å¤´æ¢ä¸º\nåŠ ç©ºä¸¤æ ¼
     replacePara = re.compile('<p.*?>')
-    #½«»»ĞĞ·û»òË«»»ĞĞ·ûÌæ»»Îª\n
+    #å°†æ¢è¡Œç¬¦æˆ–åŒæ¢è¡Œç¬¦æ›¿æ¢ä¸º\n
     replaceBR = re.compile('<br><br>|<br>')
     removeElse = re.compile('">')
-	#½«ÆäÓà±êÇ©ÌŞ³ı
+	#å°†å…¶ä½™æ ‡ç­¾å‰”é™¤
     removeExtraTag = re.compile('<[\s\S]*?>')
-    #½«×¢ÊÍÌŞ³ı/\*.*?\*/
+    #å°†æ³¨é‡Šå‰”é™¤/\*.*?\*/
     removeComments = re.compile('/\*\*/([\s\S]*?)/\*\*/')
-	#½«¿ÕĞĞÌŞ³ı
+	#å°†ç©ºè¡Œå‰”é™¤
     removeBlockline = re.compile('\n')
-    
-    #Í¼Æ¬
-    #ÌŞ³ıspan
+    #å›¾ç‰‡
+    #å‰”é™¤span
     removespan = re.compile('<span.*?>|</span>')
-    #ÌŞ³ıÍ¼Æ¬±êÊ¶×Ö
+    #å‰”é™¤å›¾ç‰‡æ ‡è¯†å­—
     removeIc = re.compile('Image copyright')
-    #ÌŞ³ıÇ°Ãæ×¸Óà
+    #å‰”é™¤å‰é¢èµ˜ä½™
     removeSrcF = re.compile('(.*?)src="')
-    #ÌŞ³ıºóÃæ×¸Óà
+    #å‰”é™¤åé¢èµ˜ä½™
     removeSrcL = re.compile('.jpg"([\s\S]*)')
-    #Ìæ»»Í¼Æ¬³ß´ç´óĞ¡
+    #æ›¿æ¢å›¾ç‰‡å°ºå¯¸å¤§å°
     replaceSize = re.compile('/320/')
-    
-    #±êÌâ
+    #æ ‡é¢˜
     removeTitleElse = re.compile('[/|\:*?"<>|]')
     
     def replace(self,x):
@@ -67,7 +65,7 @@ class Tool:
         #x = re.sub(self.removeElse,"",x)
         x = re.sub(self.removeComments,"",x)
         x = re.sub(self.removeBlockline,"",x)
-        #strip()½«Ç°ºó¶àÓàÄÚÈİÉ¾³ı
+        #strip()å°†å‰åå¤šä½™å†…å®¹åˆ é™¤
         return x.strip()
     
     def replacePic(self,x):
@@ -90,83 +88,60 @@ class BdTb:
         self.Title = None
         self.SubTitle = None
         self.Time = None
-		#È«¾Öfile±äÁ¿£¬ÎÄ¼şĞ´Èë²Ù×÷¶ÔÏó
-        self.file = None
         self.time = time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time()))
 
     def getPage(self):
         try:
             url = self.baseURL+self.newsURL
             request = urllib2.Request(url)
-            print "request ok"
             response = urllib2.urlopen(request)
             print "response ok"
             return response.read().decode('utf-8')
         except urllib2.URLError, e: 
             if hasattr(e, "reason"):
-                print "Á¬½ÓBBC,´íÎóÔ­Òò", e.reason # u''»á±¨´í why
+                print "è¿æ¥BBC,é”™è¯¯åŸå› ", e.reason # u''ä¼šæŠ¥é”™ why
                 return None
 
     def getPostData(self):
-        #´ÓurlÀïÃæÑ°ÕÒÕıÎÄ
+        #ä»urlé‡Œé¢å¯»æ‰¾æ­£æ–‡
         page = self.getPage()
         pattern = re.compile('property="articleBody">(.*?) <div class="share share--lightweight', re.S)
         result = re.findall(pattern, page)
         contents = []
         for item in result:
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = self.tool.replace(item)
             contents.append(content.encode('utf-8'))
         return contents	
 
     def getPostData2(self):
-        #´ÓurlÀïÃæÑ°ÕÒÕıÎÄ Õë¶ÔÓÚÊÓÆµÀàÍøÒ³ Ã»ÓĞarticalbody±êÇ©
+        #ä»urlé‡Œé¢å¯»æ‰¾æ­£æ–‡ é’ˆå¯¹äºè§†é¢‘ç±»ç½‘é¡µ æ²¡æœ‰articalbodyæ ‡ç­¾
         page = self.getPage()
         pattern = re.compile('property="articleBody">(.*?) <div class="share share--lightweight', re.S)
         result = re.findall(pattern, page)
         contents = []
         for item in result:
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = self.tool.replace(item)
             contents.append(content.encode('utf-8'))
         return contents	 
 
     def getPicture(self):
-        #´ÓurlÀïÃæÑ°ÕÒĞÂÎÅÍ¼Æ¬
+        #ä»urlé‡Œé¢å¯»æ‰¾æ–°é—»å›¾ç‰‡
         page = self.getPage()
         pattern = re.compile('<span class="image-and-copyright-container">(.*?) <span class="off-screen">Image copy', re.S)
         result = re.findall(pattern, page)
         contents = []
         for item in result:
             #print   "The Picture url is :  " + self.tool.replacePic(item)
-			#½«ÎÄ±¾½øĞĞÈ¥³ı±êÇ©´¦Àí£¬Í¬Ê±ÔÚÇ°ºó¼ÓÈë»»ĞĞ·û
+			#å°†æ–‡æœ¬è¿›è¡Œå»é™¤æ ‡ç­¾å¤„ç†ï¼ŒåŒæ—¶åœ¨å‰ååŠ å…¥æ¢è¡Œç¬¦
             content = self.tool.replacePic(item)
             contents.append(content.encode('utf-8'))
-        return contents	 
-        
-    def saveImg(self,contents,fileName):
-        num = 1
-        for imageURL in contents:
-            u = urllib.urlopen(imageURL)
-            data = u.read()
-            f = open(fileName + "\\" + str(num) + ".jpg", 'wb')
-            num = num + 1
-            f.write(data)
-            f.close()
-        
-		
-    def writeData(self,contents):
-        #ÏòÎÄ¼şĞ´ÈëÃ¿Ò»Â¥µÄĞÅÏ¢
-        self.file.write("URL: " + self.baseURL + self.newsURL)
-        self.file.write("Title: " + self.Title)
-        self.file.write("SubTitle: " + self.SubTitle)
-        for item in contents:
-            self.file.write(item)
-			
+        return contents
+
     def readData(self):
-        #¶ÁÈ¡bbsnewsÀïÃæµÄÄÚÈİ Çø·Ö³öÀ´url ±êÌâ ¸±±êÌâ
         try:
-            count=cur.execute('select * from news where news_Text is  NULL')
+            count=cur.execute('select * from news where news_Text is  NULL and news_From="BBC"')
             print  count
             info = cur.fetchmany(count)         
             for item in info:    
@@ -175,52 +150,27 @@ class BdTb:
                 self.Title = item[3]
                 self.SubTitle = "2333"
                 self.Time = item[2]
-                print"\n--------------------------------------------------\n"
-                print "end: " + self.Count + self.newsURL + self.Title + self.SubTitle+self.Time                    
-                mkpath = os.path.abspath('.') + "\\News\\BBC\\" + self.tool.replaceTitle(self.Title)
-                #Èç¹û¸ÃĞÂÎÅÒÑ¾­±£´æÔòÌø¹ı
-                # if os.path.isdir(mkpath):
-                    # continue                        
-                # else:
-                    # os.mkdir(mkpath)  
-                        
-                #±£´æbody
+                print"--------------------------------------------------"
+                #ä¿å­˜body
                 start = time.clock()
                 contentsText = self.getPostData()
-                #print contentsText
-                #¿ÕÕıÎÄ´íÎó´¦Àí
+                #ç©ºæ­£æ–‡é”™è¯¯å¤„ç†
                 if contentsText == [] :
                     contentsText = ['articleBody is None']
-                #print contentsText
                 end = time.clock()
                 print('getPostData Running time: %s Seconds'%(end-start))
-                
-                #Ğ´ÈëÕıÎÄ
-                #start = time.clock()
-                #self.file = open( mkpath + "\\body"+ ".txt","w+" )
-                #self.writeData(contentsText)
-                #self.file.close()
-                #end = time.clock()
-                #print('self.writeData Running time: %s Seconds'%(end-start))                    
-                
-                #±£´æÍ¼Æ¬
+
                 start = time.clock()
                 contentsPic = self.getPicture()               
-                #¿ÕÕıÎÄ´íÎó´¦Àí
+                #ç©ºæ­£æ–‡é”™è¯¯å¤„ç†
                 if contentsPic == [] :
                     contentsPic = ['Picture is None']
                 pic = ""
                 for itemPic in contentsPic:
                     pic = pic + str(itemPic) + " "
-                print pic
-                #self.saveImg(contentsPic,mkpath) #±£´æÍ¼Æ¬ÁíĞ´   
+                #self.saveImg(contentsPic,mkpath) #ä¿å­˜å›¾ç‰‡å¦å†™   
                 cur.execute("update news set news_Text=%s,news_Img=%s where news_URL = %s ;",(contentsText[0] ,str(pic) , self.newsURL))
                 conn.commit()
-                end = time.clock()
-                print('self.saveImg Running time: %s Seconds'%(end-start))         
-
-                
-                        
         finally:
             pass
                 
@@ -230,11 +180,11 @@ class BdTb:
             print "Read BBC News "
             self.readData()
             
-        #³öÏÖĞ´ÈëÒì³£
+        #å‡ºç°å†™å…¥å¼‚å¸¸
         except IOError,e:
-            print "Ğ´ÈëÒì³££¬Ô­Òò" + e.message
+            print "å†™å…¥å¼‚å¸¸ï¼ŒåŸå› " + e.message
         finally:
-            print "Ğ´ÈëÈÎÎñÍê³É"
+            print "å†™å…¥ä»»åŠ¡å®Œæˆ"
 
 a = time.clock()
 baseURL = 'http://www.bbc.com'
